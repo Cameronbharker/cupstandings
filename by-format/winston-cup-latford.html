@@ -39,6 +39,8 @@ button, select { font: inherit; }
 /* main nav */
 .mainnav { background: var(--black); position: sticky; top: 0; z-index: 30; }
 .mainnav::after { content: ""; display: block; height: 3px; background: var(--stripe); }
+/* nav and footer run full width, edge to edge like the tab bar */
+.mainnav .page, footer .page { max-width: none; padding: 0 16px; }
 .mainnav .page { display: flex; align-items: center; height: 52px; gap: 12px; }
 .logo { display: flex; align-items: center; gap: 3px; color: var(--white); }
 .logo .mark { display: block; width: 40px; height: 25px; }
@@ -137,7 +139,11 @@ h2.sub { font: 900 20px/1.2 var(--font); text-transform: uppercase; margin: 34px
 
 footer { background: var(--black); color: #a8a8a8; font-size: 12px; padding: 26px 0 40px; margin-top: 30px; }
 footer::before { content: ""; display: block; height: 3px; background: var(--stripe); margin: -26px 0 22px; }
-footer .logo { margin-bottom: 10px; }
+.foot-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.social { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border: 1px solid var(--white); border-radius: 50%; color: var(--white); }
+.social:hover { background: var(--white); color: var(--black); }
+.social svg { width: 15px; height: 15px; }
+.disclaimer { margin: 0 0 8px; color: var(--white); font-weight: 600; }
 .loading { padding: 50px 0; text-align: center; color: var(--muted); font-weight: 600; }
 .err { color: var(--down); }
 
@@ -324,8 +330,13 @@ body { padding-bottom: 64px; }
 </main>
 
 <footer><div class="page">
-  <div class="logo"><img class="mark" src="/assets/nascar-bars.svg" alt="" width="40" height="25"><span>Cup Standings</span></div>
-  Independent fan project. Results load live from NASCAR's public timing and scoring feeds; 1968-2016 results from nascaR.data (DriverAverages.com). Driver photos from NASCAR and Wikipedia. Historical formats are recalculations of this season, not official NASCAR standings. Money-based systems (1949-1967, 1974) cannot be recalculated because NASCAR no longer publishes race purses.
+  <div class="foot-top">
+    <div class="logo"><img class="mark" src="/assets/nascar-bars.svg" alt="" width="40" height="25"><span>Cup Standings</span></div>
+    <!-- X account: put the handle in href and drop hidden once the account is live -->
+    <a class="social" href="https://x.com/" aria-label="Cup Standings on X" target="_blank" rel="noopener" hidden><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></a>
+  </div>
+  <p class="disclaimer">Cup Standings is an independent fan site. It is not associated with, endorsed by, or sponsored by NASCAR.</p>
+  Results load live from NASCAR's public timing and scoring feeds; 1968-2016 results from nascaR.data (DriverAverages.com). Driver photos from NASCAR and Wikipedia. Historical formats are recalculations of this season, not official NASCAR standings. Money-based systems (1949-1967, 1974) cannot be recalculated because NASCAR no longer publishes race purses.
 </div></footer>
 
 <nav class="tabbar" aria-label="Sections">
@@ -337,11 +348,11 @@ body { padding-bottom: 64px; }
   <button data-view="rules" aria-selected="false"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3h14v18H5zm3 4v2h8V7zm0 4v2h8v-2zm0 4v2h5v-2z"/></svg>Rules</button>
 </nav>
 
-<script src="/engine.js?v=0.10.2"></script>
-<script src="/grade.js?v=0.10.2"></script>
-<script src="/data.js?v=0.10.2"></script>
-<script src="/preview.js?v=0.10.2"></script>
-<script src="/live.js?v=0.10.2"></script>
-<script src="/app.js?v=0.10.2"></script>
+<script src="/engine.js?v=0.10.3"></script>
+<script src="/grade.js?v=0.10.3"></script>
+<script src="/data.js?v=0.10.3"></script>
+<script src="/preview.js?v=0.10.3"></script>
+<script src="/live.js?v=0.10.3"></script>
+<script src="/app.js?v=0.10.3"></script>
 </body>
 </html>
