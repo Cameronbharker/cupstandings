@@ -1,4 +1,4 @@
-// app.js v0.10.1: renders Cup Standings into the nascar.com-style template and keeps it live.
+// app.js v0.10.2: renders Cup Standings into the nascar.com-style template and keeps it live.
 (function () {
   'use strict';
   const E = window.PointsEngine;
@@ -197,7 +197,7 @@
           <div class="art">${grades.slice(0, 3).map(heroPanel).join('')}</div>
           <div class="copy"><p class="eyebrow">${state.d.year} NASCAR Cup Series / The Grade</p>
             <h2>Every format. One champion.</h2>
-            <p>Cup Standings replays the live ${state.d.year} season under all ${E.FORMATS.length} championship formats NASCAR has used since 1968, from the mileage era and Winston Cup through the Playoffs to today's Chase, then grades every driver across all of them. Live during every race.</p></div>
+            <p>Cup Standings replays the live ${state.d.year} season under all ${E.FORMATS.length} championship formats NASCAR has used since 1968, from the mileage era and Winston Cup through the Playoffs to today's Chase, then grades every driver across all of them.</p></div>
         </article>
         <div class="side">
           ${raceWidget()}
