@@ -2,7 +2,7 @@
 // (sign up, confirm, choose emails, unsubscribe). Talks to the newsletter worker; shows nothing until NEWS_API is set.
 (function (root) {
   'use strict';
-  const NEWS_API = '';                       // the worker's https URL, set once it is deployed
+  const NEWS_API = 'https://cupstandings-news.stagger-race.workers.dev';   // the newsletter worker
   const KEY = 'cs-news';
   const SHOW_AFTER_MS = 8000;                // the card slides in 8 seconds after the page opens
   const SNOOZE_MS = 14 * 24 * 3600 * 1000;   // closed cards stay away for two weeks

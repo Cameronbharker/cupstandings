@@ -256,13 +256,13 @@ body.is-race, body.is-news { background: var(--page-gray); }
 .preview-strip .body { padding: 16px 18px; }
 .preview-strip h3 { font: 900 22px/1.1 var(--font); text-transform: uppercase; margin: 4px 0 6px; }
 /* race day emails: the sign-up card, bottom right above the tab bar, and the /newsletter page (news.js) */
-.news-card { position: fixed; right: 16px; bottom: 76px; z-index: 50; width: 264px; max-width: calc(100vw - 32px); background: var(--white); border-radius: 10px; box-shadow: 0 8px 28px rgba(0,0,0,.28); overflow: hidden; animation: news-in .35s ease-out; }
+.news-card { position: fixed; right: 16px; bottom: 76px; z-index: 50; width: 232px; max-width: calc(100vw - 32px); background: var(--white); border-radius: 0; box-shadow: 0 8px 28px rgba(0,0,0,.28); overflow: hidden; animation: news-in .35s ease-out; }
 @keyframes news-in { from { transform: translateY(16px); opacity: 0; } }
-.news-band { background: var(--black); color: var(--white); display: flex; align-items: center; justify-content: space-between; padding: 6px 4px 4px 12px; }
-.news-band b { font: 600 22px/.8 "Teko", var(--font); text-transform: uppercase; transform: skewX(-18deg); padding-top: 4px; }
+.news-band { background: var(--black); color: var(--white); display: flex; align-items: center; justify-content: space-between; padding: 5px 4px 3px 10px; }
+.news-band b { font: 600 20px/.8 "Teko", var(--font); text-transform: uppercase; transform: skewX(-18deg); padding-top: 4px; }
 .news-x { background: none; border: 0; color: var(--white); font: 400 20px/1 var(--font); cursor: pointer; padding: 0 6px; }
 .news-line { height: 2px; background: var(--nas-red); }   /* solid red: never the stripe, never yellow (Cameron) */
-.news-body { padding: 10px 12px 12px; }
+.news-body { padding: 8px 10px 10px; }
 .news-panel p { margin: 0 0 12px; font-size: 14px; color: #222; }
 .news-body > p { margin: 0 0 8px; font-size: 12px; color: #222; }
 .news-topics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; margin: 0 0 12px; font: 700 11px/1.2 var(--font); text-transform: uppercase; }
@@ -287,8 +287,8 @@ body.is-race, body.is-news { background: var(--page-gray); }
 .news-card .news-topics label { gap: 5px; }
 .news-card .news-topics input { width: 13px; height: 13px; }
 .news-card .news-row { gap: 6px; }
-.news-card .news-row input[type="email"] { font-size: 12px; padding: 5px 10px; }
-.news-card .news-row .pill { padding: 7px 10px; font-size: 10px; }
+.news-card .news-row input[type="email"] { font-size: 12px; padding: 5px 8px; border-radius: 0; }   /* the card is a plain square, no rounded corners (Cameron) */
+.news-card .news-row .pill { padding: 7px 10px; font-size: 10px; border-radius: 0; }
 .news-card .news-fine { font-size: 10.5px; margin-top: 7px !important; }
 .news-card .news-done { font-size: 12px; }
 @media (max-width: 860px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .preview-strip { grid-template-columns: 1fr; } }
@@ -384,12 +384,12 @@ body { padding-bottom: 64px; }
   <button data-view="rules" aria-selected="false"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3h14v18H5zm3 4v2h8V7zm0 4v2h8v-2zm0 4v2h5v-2z"/></svg>Rules</button>
 </nav>
 
-<script src="/engine.js?v=0.10.4"></script>
-<script src="/grade.js?v=0.10.4"></script>
-<script src="/data.js?v=0.10.4"></script>
-<script src="/preview.js?v=0.10.4"></script>
-<script src="/live.js?v=0.10.4"></script>
-<script src="/news.js?v=0.10.4"></script>
-<script src="/app.js?v=0.10.4"></script>
+<script src="/engine.js?v=0.10.5"></script>
+<script src="/grade.js?v=0.10.5"></script>
+<script src="/data.js?v=0.10.5"></script>
+<script src="/preview.js?v=0.10.5"></script>
+<script src="/live.js?v=0.10.5"></script>
+<script src="/news.js?v=0.10.5"></script>
+<script src="/app.js?v=0.10.5"></script>
 </body>
 </html>

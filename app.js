@@ -1,4 +1,4 @@
-// app.js v0.10.4: renders Cup Standings into the nascar.com-style template and keeps it live.
+// app.js v0.10.5: renders Cup Standings into the nascar.com-style template and keeps it live.
 (function () {
   'use strict';
   const E = window.PointsEngine;
