@@ -20,7 +20,7 @@
   // reshaped into NASCAR's own race-list and weekend-feed shape so the engine scores them unchanged.
   const FEED_FIRST_YEAR = 2017;
   async function loadHistory(year) {
-    const h = await getJSON(`data/history/${year}.json`);
+    const h = await getJSON(`/data/history/${year}.json`);
     const col = Object.fromEntries(h.fields.map((f, i) => [f, i]));
     const noPoints = h.races.every((r) => r.results.every((x) => x[col.pts] == null));   // 1974 paid by purse, no points recorded
     const list = [], weekends = {};

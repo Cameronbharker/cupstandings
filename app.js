@@ -1,4 +1,4 @@
-// app.js v0.9.3: renders Cup Standings into the nascar.com-style template and keeps it live.
+// app.js v0.10.1: renders Cup Standings into the nascar.com-style template and keeps it live.
 (function () {
   'use strict';
   const E = window.PointsEngine;
@@ -21,6 +21,10 @@
   // One name per page, used by the bottom bar, the page header and every link to the page.
   const PAGE = { home: 'Home', race: 'Next Race', grade: 'The Grade', matrix: 'All Formats', format: 'By Format', rules: 'Rules' };
   const STANDINGS_PAGES = ['grade', 'matrix', 'format'];
+  // Every page has a real path made from its name: /home, /next-race, /the-grade, /all-formats,
+  // /by-format/<format name>, /rules. "/" is Home too.
+  const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const VIEW_OF_SLUG = Object.fromEntries(VIEWS.map((v) => [slug(PAGE[v]), v]));
   const PV = window.CupPreview;
   const LV = window.CupLive;
 
@@ -39,6 +43,12 @@
   const officialKey = () => E.officialFormat(state.d ? state.d.year : CURRENT_YEAR);
   const fname = (f) => f.name;
   const fmtLabel = (f) => `${esc(f.name)}${f.key === officialKey() ? '<span class="offtag">Official</span>' : ''}`;
+  const formatBySlug = (s) => E.FORMATS.find((f) => slug(f.name) === s);
+  function pathFor(view, fmtKey) {
+    if (view !== 'format') return `/${slug(PAGE[view])}`;
+    const f = E.FORMATS.find((x) => x.key === (fmtKey || state.fmt)) || E.FORMATS[0];
+    return `/${slug(PAGE.format)}/${slug(f.name)}`;
+  }
   const fmtHead = (f) => `<th class="fmt" data-fmt="${f.key}">${fmtLabel(f)}<small>${esc(f.years)}</small></th>`;
   const scoreLine = (g) => `Grade ${g.letter} / Score ${g.score.toFixed(1)}`;
 
@@ -121,8 +131,8 @@
     const url = state.photos.get(r.id);
     const photo = url ? `<img class="photo" src="${esc(url)}" alt="${esc(d.name)}" fetchpriority="high">` : `<span class="nophoto">${esc(d.car)}</span>`;
     const name = `<span class="who">${esc(d.name)}</span>`;
-    const sig = state.signatures.has(r.id) ? `<img class="sig" src="assets/signatures/${r.id}.png" alt="${esc(d.name)}">` : name;
-    return `<a class="panel" href="#grade">${photo}<span class="num">${r.rank}</span>
+    const sig = state.signatures.has(r.id) ? `<img class="sig" src="/assets/signatures/${r.id}.png" alt="${esc(d.name)}">` : name;
+    return `<a class="panel" href="${pathFor('grade')}">${photo}<span class="num">${r.rank}</span>
       <span class="cap">${sig}<span class="stat">${esc(scoreLine(r))}</span></span></a>`;
   }
   function miniTable(rows, key) {
@@ -172,7 +182,7 @@
     const best = state.d.grades.find((g) => !leaders.has(g.id));
     if (!pick && best) pick = [best.id, 0];
     if (!pick) return '';
-    return `<a class="card era honor" href="#matrix"><p class="eyebrow">All formats</p><b>Honorable mention</b>
+    return `<a class="card era honor" href="${pathFor('matrix')}"><p class="eyebrow">All formats</p><b>Honorable mention</b>
       <span class="era-lead">${badgeImg(pick[0])}${nameCell(pick[0])}</span><small>${pick[1] ? `2nd in ${pick[1]} of ${E.FORMATS.length} formats, leads none` : `Best without leading a format: ${esc(scoreLine(state.d.grades.find((g) => g.id === pick[0])))}`}</small></a>`;
   }
   function renderHome() {
@@ -187,24 +197,24 @@
           <div class="art">${grades.slice(0, 3).map(heroPanel).join('')}</div>
           <div class="copy"><p class="eyebrow">${state.d.year} NASCAR Cup Series / The Grade</p>
             <h2>Every format. One champion.</h2>
-            <p>Cup Standings replays the live ${state.d.year} season under all ${E.FORMATS.length} championship formats NASCAR has used since 1968, from the mileage era and Winston Cup to the Chase and today's playoffs, then grades every driver across all of them. Live during every race.</p></div>
+            <p>Cup Standings replays the live ${state.d.year} season under all ${E.FORMATS.length} championship formats NASCAR has used since 1968, from the mileage era and Winston Cup through the Playoffs to today's Chase, then grades every driver across all of them. Live during every race.</p></div>
         </article>
         <div class="side">
           ${raceWidget()}
-          <div class="card widget"><h3><span>${fmtLabel(offFmt)}</span><small>${esc(chase.phase)}</small></h3>${miniTable(chase.rows, (r) => num(r.pts))}<a class="pill" href="#format/${offFmt.key}">${PAGE.format}</a></div>
+          <div class="card widget"><h3><span>${fmtLabel(offFmt)}</span><small>${esc(chase.phase)}</small></h3>${miniTable(chase.rows, (r) => num(r.pts))}<a class="pill" href="${pathFor('format', offFmt.key)}">${PAGE.format}</a></div>
         </div>
       </div>
       ${state.d.list.some((m) => m.race_type_id === 1 && !m.winner_driver_id) ? `<h2 class="sub">${PAGE.race}</h2>${previewStrip()}` : ''}
       <h2 class="sub">Who leads every format</h2>
       <p class="lede">The leader of each championship format right now. Select one to open it in ${PAGE.format}.</p>
-      <div class="eras">${E.FORMATS.map((f) => { const res = season.results[f.key]; const lead = res.rows[0]; return lead ? `<a class="card era" href="#format/${f.key}"><p class="eyebrow">${esc(f.years)}</p><b>${fmtLabel(f)}</b>
+      <div class="eras">${E.FORMATS.map((f) => { const res = season.results[f.key]; const lead = res.rows[0]; return lead ? `<a class="card era" href="${pathFor('format', f.key)}"><p class="eyebrow">${esc(f.years)}</p><b>${fmtLabel(f)}</b>
         <span class="era-lead">${badgeImg(lead.id)}${nameCell(lead.id)}</span><small>${esc(res.phase)}</small></a>` : ''; }).join('')}${honorable(season)}</div>
       <h2 class="sub">${PAGE.grade} movers</h2>
       <p class="lede">Biggest changes in ${PAGE.grade} since ${esc(lastTrack())}.</p>
       <div class="movers">${moverCard('Climbing', moves.filter((m) => m.d > 0).slice(0, 3))}${moverCard('Falling', moves.filter((m) => m.d < 0).sort((a, b) => a.d - b.d).slice(0, 3))}</div>
       <h2 class="sub">${PAGE.grade} top 10</h2>
       <div class="card widget" style="margin-top:16px"><table class="mini"><thead><tr><th>Pos</th><th></th><th>No.</th><th class="l">Driver</th><th>Grade</th><th>Score</th><th>Best</th><th>Worst</th></tr></thead><tbody>${grades.slice(0, 10).map((g) => `<tr><td>${g.rank}</td><td class="chg">${change(before.get(g.id), g.rank)}</td><td>${badge(g.id)}</td><td class="l">${nameCell(g.id)}</td><td>${gradeChip(g.letter)}</td><td>${g.score.toFixed(1)}</td><td>${g.best}</td><td>${g.worst}</td></tr>`).join('')}</tbody></table>
-        <a class="pill" href="#grade">${PAGE.grade}</a></div>`;
+        <a class="pill" href="${pathFor('grade')}">${PAGE.grade}</a></div>`;
   }
 
   // ---------- NEXT RACE ----------
@@ -229,7 +239,7 @@
       <div class="body"><p class="eyebrow">${esc(raceWhen(pv.next))}</p><h3>${esc(pv.next.race_name)}</h3>
       <p>${esc(pv.next.track_name)}${pv.track ? `, ${pv.track.length} mi ${esc(pv.track.track_type).toLowerCase()}` : ''}. ${pv.trends.races ? `Last ${pv.trends.races} races here averaged ${pv.trends.cautions.toFixed(1)} cautions and ${pv.trends.leadChanges.toFixed(0)} lead changes.` : ''}</p>
       ${w ? `<p><b>Driver to watch: ${esc(drv(w.id).name)}.</b> ${esc(watchReasons(w, pv)[0])}</p>` : ''}
-      <a class="pill" href="#race">${PAGE.race}</a></div></div>`;
+      <a class="pill" href="${pathFor('race')}">${PAGE.race}</a></div></div>`;
   }
   function renderRace() {
     const pv = state.pv;
@@ -382,16 +392,35 @@
     $('subtabs').hidden = state.view !== 'format';
     ({ home: () => { renderHome(); fitNames(); document.fonts.ready.then(fitNames); }, race: renderRace, grade: renderGrade, matrix: renderMatrix, format: renderFormat, rules: renderRules })[state.view]();
   }
-  function go(view, fmt) { location.hash = view === 'format' ? `format/${fmt || state.fmt}` : view; }
-  function readHash() {
-    const [view, fmt] = (location.hash.slice(1) || 'home').split('/');
-    const nextView = VIEWS.includes(view) ? view : 'home';
-    if (fmt && E.FORMATS.some((f) => f.key === fmt)) state.fmt = fmt;
+  function go(view, fmt) {
+    const path = pathFor(view, fmt);
+    if (path !== location.pathname) history.pushState(null, '', path);
+    readRoute();
+  }
+  function readRoute() {
+    // links from before the clean paths (#grade, #format/chase26) land on their path
+    if (location.hash.length > 1) {
+      const [v, k] = location.hash.slice(1).split('/');
+      const old = VIEWS.includes(v) ? pathFor(v, E.FORMATS.some((f) => f.key === k) ? k : undefined) : '/';
+      history.replaceState(null, '', old);
+    }
+    const [page, sub] = location.pathname.replace(/^\/+|\/+$/g, '').split('/');
+    const nextView = VIEW_OF_SLUG[page] || 'home';
+    const fmt = nextView === 'format' && formatBySlug(sub);
+    if (fmt) state.fmt = fmt.key;
+    if (nextView === 'format' && location.pathname !== pathFor('format')) history.replaceState(null, '', pathFor('format'));
     if (nextView !== state.view) window.scrollTo({ top: 0 });
     state.view = nextView;
     render();
   }
   document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href^="/"]');
+    if (a && e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+      e.preventDefault();                               // page links switch pages without a reload
+      if (a.getAttribute('href') !== location.pathname) history.pushState(null, '', a.getAttribute('href'));
+      readRoute();
+      return;
+    }
     const t = e.target.closest('button[data-view], button[data-fmt], th[data-fmt]');
     if (!t) return;
     if (t.dataset.view) go(t.dataset.view);
@@ -446,10 +475,14 @@
   }
 
   for (let y = CURRENT_YEAR; y >= FIRST_YEAR; y--) $('year').insertAdjacentHTML('beforeend', `<option value="${y}">${y} Season</option>`);
-  $('year').addEventListener('change', (e) => { state.year = Number(e.target.value); state.fmt = state.year < 2026 ? 'playoffs17' : 'chase26'; state.off = null; state.d = null; state.pv = null; state.lastRanks.clear(); tick(true); });
-  window.addEventListener('hashchange', readHash);
-  fetch('assets/signatures/index.json').then((r) => (r.ok ? r.json() : [])).catch(() => [])
+  $('year').addEventListener('change', (e) => {
+    state.year = Number(e.target.value); state.fmt = state.year < 2026 ? 'playoffs17' : 'chase26';
+    if (state.view === 'format') history.replaceState(null, '', pathFor('format'));
+    state.off = null; state.d = null; state.pv = null; state.lastRanks.clear(); tick(true);
+  });
+  window.addEventListener('popstate', readRoute);
+  fetch('/assets/signatures/index.json').then((r) => (r.ok ? r.json() : [])).catch(() => [])
     .then((ids) => { state.signatures = new Set(ids); render(); });
-  readHash();
+  readRoute();
   tick(true);
 })();

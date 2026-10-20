@@ -301,7 +301,7 @@
       run: (c) => classicChase(c, { scorer: S.y2026, duels: true, size: 16,
         pick: (rs, w, c) => (c.officialRsOrder || rs.map((r) => r.id)).slice(0, 16), reset: (i) => CHASE_2026_RESET[i] }) },
     { key: 'season26', name: 'Full Season, No Reset', years: '2026 points', group: 'Current',
-      blurb: 'Every 2026 point (55 to win, stage points, fastest lap, Duels) added up across all 36 races with no playoff reset. The pure points champion.',
+      blurb: 'Every 2026 point (55 to win, stage points, fastest lap, Duels) added up across all 36 races with no Chase reset. The pure points champion.',
       score: S.y2026, run: (c) => fullSeason(c, S.y2026, true) },
   ];
 
