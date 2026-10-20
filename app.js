@@ -1,4 +1,4 @@
-// app.js v0.10.3: renders Cup Standings into the nascar.com-style template and keeps it live.
+// app.js v0.10.4: renders Cup Standings into the nascar.com-style template and keeps it live.
 (function () {
   'use strict';
   const E = window.PointsEngine;
@@ -17,9 +17,9 @@
   const STATUS = { champion: 'Champion', final4: 'Championship 4', clinched: 'Clinched', alive: 'Alive', chase: 'In the Chase', projected: 'Projected', eliminated: 'Eliminated', out: '', season: '' };
   const ROUNDS = [16, 12, 8];
   const eliminatedIn = (round) => `Eliminated, Round of ${ROUNDS[round - 1]}`;
-  const VIEWS = ['home', 'race', 'grade', 'matrix', 'format', 'rules'];
+  const VIEWS = ['home', 'race', 'grade', 'matrix', 'format', 'rules', 'news'];
   // One name per page, used by the bottom bar, the page header and every link to the page.
-  const PAGE = { home: 'Home', race: 'Next Race', grade: 'The Grade', matrix: 'All Formats', format: 'By Format', rules: 'Rules' };
+  const PAGE = { home: 'Home', race: 'Next Race', grade: 'The Grade', matrix: 'All Formats', format: 'By Format', rules: 'Rules', news: 'Newsletter' };
   const STANDINGS_PAGES = ['grade', 'matrix', 'format'];
   // Every page has a real path made from its name: /home, /next-race, /the-grade, /all-formats,
   // /by-format/<format name>, /rules. "/" is Home too.
@@ -34,7 +34,7 @@
   const ordinal = (n) => { const s = ['th', 'st', 'nd', 'rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
   const longDate = (iso) => { const d = new Date(iso); return `${d.toLocaleDateString('en-US', { month: 'long' })} ${ordinal(d.getDate())}, ${d.getFullYear()}`; };
   const shortDate = (iso) => new Date(iso).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
-  const cleanName = (s) => s.replace(/\s*\(.*?\)/g, '').replace(/^[\s#*]+/, '');
+  const cleanName = E.cleanName;
 
   const state = { year: CURRENT_YEAR, view: 'home', fmt: 'chase26', off: null, offAt: 0, d: null, timer: null, lastRanks: new Map(), busy: false, signatures: new Set(), pv: null, photos: new Map() };
 
@@ -277,7 +277,7 @@
           <p class="eyebrow" style="margin-top:12px">Wrecks and incidents</p>${bars(timing.cautions)}
           <p class="eyebrow" style="margin-top:12px">Lead changes</p>${bars(timing.leads)}</div>
         <div class="card widget"><h3><span>Recent winners</span><small>${esc(next.track_name)}</small></h3>
-          <table class="mini"><tbody>${history.map((h) => { const win = PV.winnerOf(h.race); return win ? `<tr><td>${h.meta.season}</td><td class="l">${esc(h.race.race_name)}</td><td class="l">${esc(win.driver_fullname.replace(/\s*\(.*?\)/g, ''))}</td><td>Started ${win.starting_position}</td></tr>` : ''; }).join('')}</tbody></table></div>
+          <table class="mini"><tbody>${history.map((h) => { const win = PV.winnerOf(h.race); return win ? `<tr><td>${h.meta.season}</td><td class="l">${esc(h.race.race_name)}</td><td class="l">${esc(cleanName(win.driver_fullname))}</td><td>Started ${win.starting_position}</td></tr>` : ''; }).join('')}</tbody></table></div>
       </div>
       <h2 class="sub">Driver form at ${esc(next.track_name)}</h2>
       <p class="lede">Every current driver with ${PV.MIN_TRACK_STARTS} or more starts in the last ${t.races} races here, best average finish first.</p>
@@ -379,18 +379,21 @@
     if (!state.d) return;
     const home = state.view === 'home';
     const race = state.view === 'race';
+    const news = state.view === 'news';
     document.body.classList.toggle('is-home', home);
     document.body.classList.toggle('is-race', race);
+    document.body.classList.toggle('is-news', news);
     $('race').hidden = !race;
+    $('news').hidden = !news;
     $('home').hidden = !home;
     $('pagehead').hidden = home;
     const lr = race && state.d.liveRace;
     $('live').hidden = !lr;
     if (lr) LV.update($('live'), lr, state.pv && state.pv.track ? state.pv.track.track_image : null);
-    $('standings').hidden = home || race;
+    $('standings').hidden = home || race || news;
     renderHead();
     $('subtabs').hidden = state.view !== 'format';
-    ({ home: () => { renderHome(); fitNames(); document.fonts.ready.then(fitNames); }, race: renderRace, grade: renderGrade, matrix: renderMatrix, format: renderFormat, rules: renderRules })[state.view]();
+    ({ home: () => { renderHome(); fitNames(); document.fonts.ready.then(fitNames); }, race: renderRace, grade: renderGrade, matrix: renderMatrix, format: renderFormat, rules: renderRules, news: () => window.CupNews.page($('news')) })[state.view]();
   }
   function go(view, fmt) {
     const path = pathFor(view, fmt);

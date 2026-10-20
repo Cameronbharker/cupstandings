@@ -11,7 +11,7 @@
   const TYPE = { FOUR_WHEEL_CHANGE: '4 tires', TWO_WHEEL_CHANGE_RIGHT: 'Right side', TWO_WHEEL_CHANGE_LEFT: 'Left side', OTHER: 'Fuel only' };
 
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const name = (s) => String(s || '').replace(/\s*\(.*?\)/g, '').replace(/^[\s#*]+/, '');
+  const name = (s) => root.PointsEngine.cleanName(s);   // engine.js, loaded first
   const secs = (t) => (t > 0 ? t.toFixed(3) : '');
   const lapsLed = (v) => (v.laps_led || []).reduce((s, l) => s + (l.end_lap - l.start_lap + 1), 0);
 

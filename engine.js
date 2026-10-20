@@ -3,6 +3,9 @@
 (function (root) {
   'use strict';
 
+  // NASCAR tags names in its feeds: "(C)" Chase driver, "(i)" not points eligible, "#" rookie. One rule for every page.
+  const cleanName = (s) => String(s || '').replace(/\s*\(.*?\)\s*/g, '').replace(/^[\s#*]+|[\s#*]+$/g, '').trim();
+
   // ---------- per-position tables (source: Wikipedia, List of NASCAR points scoring systems) ----------
   const LATFORD_TAIL = [31, 28, 25, 20, 15, 10, 8, 6, 4, 2, 1]; // positions 44-54
   function latford(pos, winPts) {
@@ -49,7 +52,7 @@
       const official = r.points_earned || 0;
       return {
         id: r.driver_id,
-        name: r.driver_fullname.replace(/\s*\(.*?\)\s*/g, '').replace(/^[\s#*]+|[\s#*]+$/g, '').trim(),
+        name: cleanName(r.driver_fullname),
         car: r.car_number, make: r.car_make, team: r.team_name,
         pos: r.finishing_position, start: r.starting_position,
         led: r.laps_led || 0, laps: r.laps_completed || 0, status: r.finishing_status,
@@ -367,7 +370,7 @@
     return { ctx, results };
   }
 
-  const api = { FORMATS, buildSeason, normalizeRace, officialFormat, tables: { latford, t2011, t2016, t2017, t2026, mileage, perLap } };
+  const api = { FORMATS, cleanName, buildSeason, normalizeRace, officialFormat, tables: { latford, t2011, t2016, t2017, t2026, mileage, perLap } };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   root.PointsEngine = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);
