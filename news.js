@@ -30,7 +30,7 @@
   const form = () => `<form class="news-form" novalidate>${boxes(TOPICS.map((t) => t[0]))}
     <input class="news-hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
     <div class="news-row"><input type="email" name="email" placeholder="Email address" aria-label="Email address" autocomplete="email"><button class="pill" type="submit">Sign up</button></div>
-    <p class="news-fine news-msg" role="status">We email you a link to confirm. Unsubscribe any time.</p></form>`;
+    <p class="news-fine news-msg" role="status">Unsubscribe any time.</p></form>`;
   const sent = (email) => `<p class="news-done"><b>Check your inbox.</b> Tap the link we sent to ${esc(email)} to confirm.</p>`;
   const fail = (msg, err) => { msg.textContent = err; msg.classList.add('err'); };
 
@@ -65,7 +65,7 @@
     el.className = 'news-card';
     el.setAttribute('aria-label', 'Stay on track');
     el.innerHTML = `<div class="news-band"><b>Stay on track</b><button class="news-x" type="button" aria-label="Close">&times;</button></div><div class="news-line"></div>
-      <div class="news-body"><p>Free emails every Cup race. Pick yours.</p>${form()}</div>`;
+      <div class="news-body"><p>Live Updates &amp; Alerts</p>${form()}</div>`;
     const onKey = (e) => { if (e.key === 'Escape') close(); };
     function close() { store.set({ ...store.get(), closed: Date.now() }); el.remove(); document.removeEventListener('keydown', onKey); }
     el.querySelector('.news-x').addEventListener('click', close);
